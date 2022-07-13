@@ -44,6 +44,9 @@ export default class AssetManager {
 	}
 
 	public getFastRefreshMarkup() {
+		if (this.isProduction()) {
+			return ''
+		}
 		return `<script type="module">
 		import RefreshRuntime from '${this.getDevServerUrl()}/@react-refresh'
 		RefreshRuntime.injectIntoGlobalHook(window)

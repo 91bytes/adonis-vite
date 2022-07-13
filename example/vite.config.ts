@@ -17,5 +17,8 @@ export default defineConfig({
 	optimizeDeps: {
 		entries: [],
 	},
+	server: {
+		origin: 'http://localhost:3000',
+	},
 	plugins: [react()],
 })

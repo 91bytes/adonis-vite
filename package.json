@@ -1,0 +1,86 @@
+{
+	"name": "@91codes/adonis-vite",
+	"version": "0.1.0",
+	"main": "build/providers/ViteProvider.js",
+	"license": "MIT",
+	"scripts": {
+		"mrm": "mrm --preset=@adonisjs/mrm-preset",
+		"pretest": "npm run lint",
+		"test": "node -r @adonisjs/require-ts/build/register bin/test.ts",
+		"clean": "del-cli build",
+		"compile": "npm run clean && tsc",
+		"build": "npm run compile",
+		"prepublishOnly": "npm run build",
+		"lint": "eslint . --ext=.ts",
+		"format": "prettier --write ."
+	},
+	"eslintConfig": {
+		"extends": [
+			"plugin:adonis/typescriptApp",
+			"prettier"
+		],
+		"plugins": [
+			"prettier"
+		],
+		"rules": {
+			"prettier/prettier": [
+				"error"
+			]
+		}
+	},
+	"eslintIgnore": [
+		"build"
+	],
+	"prettier": {
+		"trailingComma": "es5",
+		"semi": false,
+		"singleQuote": true,
+		"useTabs": true,
+		"quoteProps": "consistent",
+		"bracketSpacing": true,
+		"arrowParens": "always",
+		"printWidth": 100
+	},
+	"mrmConfig": {
+		"core": false,
+		"license": "MIT",
+		"services": [
+			"github-actions"
+		],
+		"minNodeVersion": "16.13.1",
+		"probotApps": [
+			"stale",
+			"lock"
+		],
+		"runGhActionsOnWindows": false
+	},
+	"devDependencies": {
+		"@adonisjs/core": "^5.1.0",
+		"@adonisjs/mrm-preset": "^5.0.3",
+		"@adonisjs/require-ts": "^2.0.12",
+		"@adonisjs/view": "^6.0.0",
+		"@types/node": "^18.0.3",
+		"del-cli": "^4.0.1",
+		"eslint": "^8.19.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-adonis": "^2.1.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"prettier": "^2.7.1",
+		"typescript": "^4.7.4",
+		"vite": "^2.9.14"
+	},
+	"peerDependencies": {
+		"@adonisjs/core": "^5.1.0",
+		"@adonisjs/view": "^6.0.0",
+		"vite": "^2.9.14"
+	},
+	"files": [
+		"build/**/*"
+	],
+	"adonisjs": {
+		"types": "@91codes/adonisjs-vite",
+		"providers": [
+			"@91codes/adonisjs-vite"
+		]
+	}
+}

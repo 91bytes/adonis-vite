@@ -1,0 +1,27 @@
+{
+	"extends": "adonis-preset-ts/tsconfig.json",
+	"include": ["**/*"],
+	"exclude": ["node_modules", "build"],
+	"compilerOptions": {
+		"outDir": "build",
+		"rootDir": "./",
+		"sourceMap": true,
+		"lib": ["es2020", "DOM"],
+		"jsx": "react",
+		"paths": {
+			"App/*": ["./app/*"],
+			"Config/*": ["./config/*"],
+			"Contracts/*": ["./contracts/*"],
+			"Database/*": ["./database/*"]
+		},
+		"types": [
+			"@adonisjs/core",
+			"@adonisjs/repl",
+			"@adonisjs/session",
+			"@adonisjs/view",
+			"@adonisjs/shield",
+			"@japa/preset-adonis/build/adonis-typings",
+			"vite/client"
+		]
+	}
+}

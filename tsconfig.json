@@ -1,0 +1,12 @@
+{
+	"extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+	"include": ["src"],
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"types": ["@types/node", "@adonisjs/core", "@adonisjs/view"],
+		"lib": ["es2020", "DOM"],
+		"rootDir": "src"
+	}
+}

@@ -19,7 +19,7 @@ yarn add @91codes/adonis-vite
 #### Please note that you need to install Vite separately.
 
 ```sh
-npm inistall --save-dev vite
+npm install --save-dev vite
 # or
 yarn add -D vite
 ```

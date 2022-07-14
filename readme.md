@@ -63,7 +63,7 @@ export default defineConfig({
 
 #### Add edge tags in layout
 
-Add the `@vite` edge tag in your edge layout's head. You don't need `@viteReactRefresh` if you are using react.
+Add the `@vite` edge tag in your edge layout's head. You don't need `@viteReactRefresh` if you aren't using react.
 
 ```edge
 @viteReactRefresh()

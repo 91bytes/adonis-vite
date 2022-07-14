@@ -1,8 +1,10 @@
 {
 	"name": "@91codes/adonis-vite",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"main": "build/providers/ViteProvider.js",
 	"license": "MIT",
+	"homepage": "https://github.com/91codes/adonis-vite#readme",
+	"repository": "github:91codes/adonis-vite",
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
@@ -67,12 +69,12 @@
 		"eslint-plugin-prettier": "^4.2.1",
 		"prettier": "^2.7.1",
 		"typescript": "^4.7.4",
-		"vite": "^2.9.14"
+		"vite": "^3.0.0"
 	},
 	"peerDependencies": {
 		"@adonisjs/core": "^5.1.0",
 		"@adonisjs/view": "^6.0.0",
-		"vite": "^2.9.14"
+		"vite": "^3.0.0 || ^2.9.14"
 	},
 	"files": [
 		"build/**/*"

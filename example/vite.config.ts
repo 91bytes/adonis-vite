@@ -18,7 +18,7 @@ export default defineConfig({
 		entries: [],
 	},
 	server: {
-		origin: 'http://localhost:3000',
+		origin: 'http://localhost:5173',
 	},
 	plugins: [react()],
 })

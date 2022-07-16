@@ -1,17 +1,20 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
 import { resolveConfig, Manifest, ResolvedConfig } from 'vite'
 
 export default class AssetManager {
 	private manifest: Manifest
 	private config: ResolvedConfig
+	private devServerUrl: string | undefined
 
 	constructor(private app: ApplicationContract) {}
 
 	public async setup() {
 		await this.readViteConfig()
-		if (!this.manifest && this.isProduction()) {
-			await this.readManifest()
+		await this.readManifest()
+		if (this.isDevServerRunning()) {
+			this.devServerUrl = await readFile(this.app.publicPath('hot'), 'utf-8')
 		}
 	}
 
@@ -24,9 +27,9 @@ export default class AssetManager {
 	 * @returns Raw HTML
 	 */
 	public getMarkup(entrypoints: string[]) {
-		if (!this.isProduction()) {
+		if (this.isDevServerRunning()) {
 			return ['@vite/client', ...entrypoints]
-				.map((entrypoint) => this.devEntrypointMarkup(entrypoint))
+				.map((entrypoint) => this.entryTag(`${this.devServerUrl}/${entrypoint}`))
 				.join('\n')
 		}
 		let markup = entrypoints.map((entrypoint) => this.prodEntrypointMarkup(entrypoint)).join('\n')
@@ -34,8 +37,8 @@ export default class AssetManager {
 		return markup
 	}
 
-	private isProduction() {
-		return this.app.env.get('NODE_ENV', 'development') === 'production'
+	private isDevServerRunning() {
+		return existsSync(this.app.publicPath('hot'))
 	}
 
 	private async readViteConfig() {
@@ -44,11 +47,11 @@ export default class AssetManager {
 	}
 
 	public getFastRefreshMarkup() {
-		if (this.isProduction()) {
+		if (!this.isDevServerRunning()) {
 			return ''
 		}
 		return `<script type="module">
-		import RefreshRuntime from '${this.getDevServerUrl()}/@react-refresh'
+		import RefreshRuntime from '${this.devServerUrl}/@react-refresh'
 		RefreshRuntime.injectIntoGlobalHook(window)
 		window.$RefreshReg$ = () => {}
 		window.$RefreshSig$ = () => (type) => type
@@ -56,20 +59,8 @@ export default class AssetManager {
 	</script>`
 	}
 
-	private getDevServerUrl() {
-		const { https, port, host } = this.config.preview
-		return `${https ? 'https' : 'http'}://${typeof host === 'string' ? host : 'localhost'}:${
-			port ?? 3000
-		}`
-	}
-
-	private devEntrypointMarkup(entrypoint: string) {
-		const url = `${this.getDevServerUrl()}/${entrypoint}`
-		return this.entryTag(url)
-	}
-
 	private prodEntrypointMarkup(entrypoint: string) {
-		const fileName = this.manifest[entrypoint].file
+		const fileName = '/' + this.manifest[entrypoint].file
 
 		if (fileName.endsWith('.css')) {
 			return this.entryTag(fileName)
@@ -110,28 +101,20 @@ export default class AssetManager {
 	private async readManifest(): Promise<void> {
 		const manifestFileName =
 			typeof this.config.build.manifest === 'string' ? this.config.build.manifest : 'manifest.json'
+		if (!existsSync(this.app.publicPath(manifestFileName))) return
+
 		const manifestText = await readFile(this.app.publicPath(manifestFileName), 'utf-8')
 		this.manifest = JSON.parse(manifestText)
 	}
 
 	private entryTag(path: string) {
-		if (!path.startsWith('/') && !path.startsWith('http://') && !path.startsWith('https://')) {
-			path = `/${path}`
-		}
 		if (path.endsWith('.css')) {
-			return `<link rel="stylesheet" href="${this.getAbsolutePath(path)}">`
+			return `<link rel="stylesheet" href="${path}">`
 		}
-		return `<script type="module" src="${this.getAbsolutePath(path)}"></script>`
+		return `<script type="module" src="${path}"></script>`
 	}
 
 	private prefetchTag(path: string, as?: HTMLLinkElement['as']) {
-		return `<link rel="prefetch" href="${this.getAbsolutePath(path)}"${as ? ` as="${as}"` : ''}>`
-	}
-
-	private getAbsolutePath(path: string) {
-		if (!path.startsWith('/') && !path.startsWith('http://') && !path.startsWith('https://')) {
-			return `/${path}`
-		}
-		return path
+		return `<link rel="prefetch" href="${path}"${as ? ` as="${as}"` : ''}>`
 	}
 }

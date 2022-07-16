@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import adonisVite from '@91codes/adonis-vite/build/plugin/adonis-vite'
 
 export default defineConfig({
 	root: './resources/frontend/entrypoints',
@@ -20,5 +21,5 @@ export default defineConfig({
 	server: {
 		origin: 'http://localhost:5173',
 	},
-	plugins: [react()],
+	plugins: [react(), adonisVite()],
 })

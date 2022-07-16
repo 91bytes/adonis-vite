@@ -19,7 +19,7 @@ import Application from '@ioc:Adonis/Core/Application'
 |
 */
 export default driveConfig({
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Default disk
   |--------------------------------------------------------------------------
@@ -28,10 +28,10 @@ export default driveConfig({
   | the `DRIVE_DISK` environment variable.
   |
   */
-  disk: Env.get('DRIVE_DISK'),
+	disk: Env.get('DRIVE_DISK'),
 
-  disks: {
-    /*
+	disks: {
+		/*
     |--------------------------------------------------------------------------
     | Local
     |--------------------------------------------------------------------------
@@ -40,11 +40,11 @@ export default driveConfig({
     | files when not using this disk.
     |
     */
-    local: {
-      driver: 'local',
-      visibility: 'public',
+		local: {
+			driver: 'local',
+			visibility: 'public',
 
-      /*
+			/*
       |--------------------------------------------------------------------------
       | Storage root - Local driver only
       |--------------------------------------------------------------------------
@@ -53,9 +53,9 @@ export default driveConfig({
       | files.
       |
       */
-      root: Application.tmpPath('uploads'),
+			root: Application.tmpPath('uploads'),
 
-      /*
+			/*
       |--------------------------------------------------------------------------
       | Serve files - Local driver only
       |--------------------------------------------------------------------------
@@ -65,9 +65,9 @@ export default driveConfig({
       | storage services that has inbuilt capabilities to serve files.
       |
       */
-      serveFiles: true,
+			serveFiles: true,
 
-      /*
+			/*
       |--------------------------------------------------------------------------
       | Base path - Local driver only
       |--------------------------------------------------------------------------
@@ -77,10 +77,10 @@ export default driveConfig({
       | you are not registering routes with this prefix.
       |
       */
-      basePath: '/uploads',
-    },
+			basePath: '/uploads',
+		},
 
-    /*
+		/*
     |--------------------------------------------------------------------------
     | S3 Driver
     |--------------------------------------------------------------------------
@@ -93,20 +93,20 @@ export default driveConfig({
     |**************************************************************************
     |
     */
-    // s3: {
-    //   driver: 's3',
-    //   visibility: 'public',
-    //   key: Env.get('S3_KEY'),
-    //   secret: Env.get('S3_SECRET'),
-    //   region: Env.get('S3_REGION'),
-    //   bucket: Env.get('S3_BUCKET'),
-    //   endpoint: Env.get('S3_ENDPOINT'),
-    //
-    //  // For minio to work
-    //  // forcePathStyle: true,
-    // },
+		// s3: {
+		//   driver: 's3',
+		//   visibility: 'public',
+		//   key: Env.get('S3_KEY'),
+		//   secret: Env.get('S3_SECRET'),
+		//   region: Env.get('S3_REGION'),
+		//   bucket: Env.get('S3_BUCKET'),
+		//   endpoint: Env.get('S3_ENDPOINT'),
+		//
+		//  // For minio to work
+		//  // forcePathStyle: true,
+		// },
 
-    /*
+		/*
     |--------------------------------------------------------------------------
     | GCS Driver
     |--------------------------------------------------------------------------
@@ -119,13 +119,13 @@ export default driveConfig({
     |**************************************************************************
     |
     */
-    // gcs: {
-    //   driver: 'gcs',
-    //   visibility: 'public',
-    //   keyFilename: Env.get('GCS_KEY_FILENAME'),
-    //   bucket: Env.get('GCS_BUCKET'),
+		// gcs: {
+		//   driver: 'gcs',
+		//   visibility: 'public',
+		//   keyFilename: Env.get('GCS_KEY_FILENAME'),
+		//   bucket: Env.get('GCS_BUCKET'),
 
-    /*
+		/*
       |--------------------------------------------------------------------------
       | Uniform ACL - Google cloud storage only
       |--------------------------------------------------------------------------
@@ -143,7 +143,7 @@ export default driveConfig({
       | console.
       |
       */
-    //   usingUniformAcl: false,
-    // },
-  },
+		//   usingUniformAcl: false,
+		// },
+	},
 })

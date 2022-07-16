@@ -18,7 +18,7 @@ import { hashConfig } from '@adonisjs/core/build/config'
 |
 */
 export default hashConfig({
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Default hasher
   |--------------------------------------------------------------------------
@@ -27,10 +27,10 @@ export default hashConfig({
   | free to change the default value
   |
   */
-  default: Env.get('HASH_DRIVER', 'argon'),
+	default: Env.get('HASH_DRIVER', 'argon'),
 
-  list: {
-    /*
+	list: {
+		/*
     |--------------------------------------------------------------------------
     | Argon
     |--------------------------------------------------------------------------
@@ -43,16 +43,16 @@ export default hashConfig({
     | npm install phc-argon2
     |
     */
-    argon: {
-      driver: 'argon2',
-      variant: 'id',
-      iterations: 3,
-      memory: 4096,
-      parallelism: 1,
-      saltSize: 16,
-    },
+		argon: {
+			driver: 'argon2',
+			variant: 'id',
+			iterations: 3,
+			memory: 4096,
+			parallelism: 1,
+			saltSize: 16,
+		},
 
-    /*
+		/*
     |--------------------------------------------------------------------------
     | Bcrypt
     |--------------------------------------------------------------------------
@@ -65,9 +65,9 @@ export default hashConfig({
     | npm install phc-bcrypt
     |
     */
-    bcrypt: {
-      driver: 'bcrypt',
-      rounds: 10,
-    },
-  },
+		bcrypt: {
+			driver: 'bcrypt',
+			rounds: 10,
+		},
+	},
 })

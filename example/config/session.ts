@@ -10,7 +10,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import { sessionConfig } from '@adonisjs/session/build/config'
 
 export default sessionConfig({
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Enable/Disable sessions
   |--------------------------------------------------------------------------
@@ -19,9 +19,9 @@ export default sessionConfig({
   | entire application
   |
   */
-  enabled: true,
+	enabled: true,
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Driver
   |--------------------------------------------------------------------------
@@ -36,9 +36,9 @@ export default sessionConfig({
   | Note: Switching drivers will make existing sessions invalid.
   |
   */
-  driver: Env.get('SESSION_DRIVER'),
+	driver: Env.get('SESSION_DRIVER'),
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Cookie name
   |--------------------------------------------------------------------------
@@ -46,9 +46,9 @@ export default sessionConfig({
   | The name of the cookie that will hold the session id.
   |
   */
-  cookieName: 'adonis-session',
+	cookieName: 'adonis-session',
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Clear session when browser closes
   |--------------------------------------------------------------------------
@@ -57,9 +57,9 @@ export default sessionConfig({
   | this value to `true` will ignore the `age`.
   |
   */
-  clearWithBrowser: false,
+	clearWithBrowser: false,
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Session age
   |--------------------------------------------------------------------------
@@ -73,9 +73,9 @@ export default sessionConfig({
   | Example: `2 days`, `2.5 hrs`, `1y`, `5s` and so on.
   |
   */
-  age: '2h',
+	age: '2h',
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Cookie values
   |--------------------------------------------------------------------------
@@ -84,13 +84,13 @@ export default sessionConfig({
   | driver will use the same values.
   |
   */
-  cookie: {
-    path: '/',
-    httpOnly: true,
-    sameSite: false,
-  },
+	cookie: {
+		path: '/',
+		httpOnly: true,
+		sameSite: false,
+	},
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Configuration for the file driver
   |--------------------------------------------------------------------------
@@ -99,11 +99,11 @@ export default sessionConfig({
   | must be stored.
   |
   */
-  file: {
-    location: Application.tmpPath('sessions'),
-  },
+	file: {
+		location: Application.tmpPath('sessions'),
+	},
 
-  /*
+	/*
   |--------------------------------------------------------------------------
   | Redis driver
   |--------------------------------------------------------------------------
@@ -112,5 +112,5 @@ export default sessionConfig({
   | must be defined inside `config/redis.ts` file as well.
   |
   */
-  redisConnection: 'local',
+	redisConnection: 'local',
 })

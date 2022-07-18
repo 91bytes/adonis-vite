@@ -55,7 +55,7 @@ Add the `@vite` edge tag in your edge layout's head. You don't need `@viteReactR
 
 ```edge
 @viteReactRefresh()
-@vite('app.tsx')
+@vite('resources/frontend/entrypoints/app.tsx')
 ```
 
 #### Add to .gitignore

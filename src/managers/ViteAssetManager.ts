@@ -1,22 +1,23 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { readFile } from 'fs/promises'
-import { existsSync } from 'fs'
+import { PathLike } from 'fs'
+import { readFile, access } from 'fs/promises'
 import { resolveConfig, Manifest, ResolvedConfig } from 'vite'
 
-export default class AssetManager {
+async function fileExists(path: PathLike) {
+	try {
+		await access(path)
+		return true
+	} catch (_e) {
+		return false
+	}
+}
+
+export default class ViteAssetManager {
 	private manifest: Manifest
 	private config: ResolvedConfig
 	private devServerUrl: string | undefined
 
 	constructor(private app: ApplicationContract) {}
-
-	public async setup() {
-		await this.readViteConfig()
-		await this.readManifest()
-		if (this.isDevServerRunning()) {
-			this.devServerUrl = await readFile(this.app.publicPath('hot'), 'utf-8')
-		}
-	}
 
 	/**
 	 * Generates HTML to include appropriate JS, CSS.
@@ -26,19 +27,35 @@ export default class AssetManager {
 	 * @param entrypoints Vite entry points, for ex. app.ts
 	 * @returns Raw HTML
 	 */
-	public getMarkup(entrypoints: string[]) {
-		if (this.isDevServerRunning()) {
-			return ['@vite/client', ...entrypoints]
+	public async getMarkup(entrypoints: string | string[]) {
+		await this.setup()
+		const entrypointsList = ([] as string[]).concat(entrypoints)
+		if (this.devServerUrl) {
+			return ['@vite/client', ...entrypointsList]
 				.map((entrypoint) => this.entryTag(`${this.devServerUrl}/${entrypoint}`))
 				.join('\n')
 		}
-		let markup = entrypoints.map((entrypoint) => this.prodEntrypointMarkup(entrypoint)).join('\n')
+		let markup = entrypointsList
+			.map((entrypoint) => this.prodEntrypointMarkup(entrypoint))
+			.join('\n')
 		markup += this.prefetchMarkup()
 		return markup
 	}
 
+	private async setup() {
+		if (!this.config) {
+			await this.readViteConfig()
+		}
+		if (!this.manifest) {
+			await this.readManifest()
+		}
+		if (!this.devServerUrl && (await this.isDevServerRunning())) {
+			this.devServerUrl = await readFile(this.app.publicPath('hot'), 'utf-8')
+		}
+	}
+
 	private isDevServerRunning() {
-		return existsSync(this.app.publicPath('hot'))
+		return fileExists(this.app.publicPath('hot'))
 	}
 
 	private async readViteConfig() {
@@ -101,7 +118,7 @@ export default class AssetManager {
 	private async readManifest(): Promise<void> {
 		const manifestFileName =
 			typeof this.config.build.manifest === 'string' ? this.config.build.manifest : 'manifest.json'
-		if (!existsSync(this.app.publicPath(manifestFileName))) return
+		if (!(await fileExists(this.app.publicPath(manifestFileName)))) return
 
 		const manifestText = await readFile(this.app.publicPath(manifestFileName), 'utf-8')
 		this.manifest = JSON.parse(manifestText)

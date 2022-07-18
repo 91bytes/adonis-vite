@@ -2,6 +2,8 @@
 
 AdonisJS ships with webpack encore to manage your frontend assets. This package provides a way to use Vite instead.
 
+_Note: the API may change between minor versions until we reach 1.0._
+
 ## Installation and usage
 
 If you are creating a new project, choose **false** or **N** when you are asked if you want to configure webpack encore for compiling frontend assets.
@@ -37,6 +39,7 @@ You can start with the following. Feel free to customise it to your needs. You d
 ```ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import adonis from '@91codes/adonis-vite/build/plugins/adonis'
 
 export default defineConfig({
 	root: './resources/frontend/entrypoints',
@@ -57,7 +60,7 @@ export default defineConfig({
 	server: {
 		origin: 'http://localhost:3000',
 	},
-	plugins: [react()],
+	plugins: [react(), adonis()],
 })
 ```
 
@@ -79,6 +82,14 @@ Add the following scripts in package.json:
 		"vite:build": "npm run vite build"
 	}
 }
+```
+
+#### Add to .gitignore
+
+```
+public/hot
+public/assets
+public/manifest.json
 ```
 
 Run these along with the default `dev` and `build` scripts.

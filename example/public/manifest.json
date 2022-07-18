@@ -1,0 +1,9 @@
+{
+	"app.tsx": {
+		"file": "assets/app.7c3a04ba.js",
+		"src": "app.tsx",
+		"isEntry": true,
+		"css": ["assets/app.19ab20ec.css"],
+		"assets": ["assets/logo.229f2633.svg"]
+	}
+}

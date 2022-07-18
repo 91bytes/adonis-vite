@@ -1,5 +1,6 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import MissingEntryPointException from '../exceptions/MissingEntryPoint'
+import ViteAssetManager from '../managers/ViteAssetManager'
 
 export default class ViteProvider {
 	public static needsApplication = true
@@ -8,15 +9,14 @@ export default class ViteProvider {
 
 	public register() {
 		// Register your own bindings
-		this.app.container.singleton('AdonisJS/Vite', () => require('../managers/ViteAssetManager'))
+		this.app.container.singleton('AdonisJS/Vite', () => new ViteAssetManager(this.app))
 	}
 
 	public async boot() {
 		// IoC container is ready
 		const View = this.app.container.resolveBinding('Adonis/Core/View')
-		const ViteAssetManager = (await import('../managers/ViteAssetManager')).default
-		const assetManager = new ViteAssetManager(this.app)
-		await assetManager.setup()
+		const assetManager = this.app.container.resolveBinding('AdonisJS/Vite')
+		View.global('viteAssetsManager', assetManager)
 
 		View.registerTag({
 			tagName: 'vite',
@@ -31,12 +31,13 @@ export default class ViteProvider {
 					token.filename,
 					parser
 				)
-				const entrypoints =
-					parsed.type === 'Literal'
-						? [parsed.value]
-						: parsed.elements.map((element) => element.value)
-
-				buffer.outputRaw(assetManager.getMarkup(entrypoints))
+				const entrypointName = parser.utils.stringify(parsed)
+				buffer.outputExpression(
+					`await state.viteAssetsManager.getMarkup(${entrypointName})`,
+					token.filename,
+					token.loc.start.line,
+					false
+				)
 			},
 		})
 

@@ -3,9 +3,44 @@ import fs from 'fs'
 import path from 'path'
 import { AddressInfo } from 'net'
 
-export default function adonisVitePlugin(): Plugin {
+export default function adonisPlugin({ input }: { input: string | string[] }): Plugin {
+	let resolvedConfig: ResolvedConfig
+	let devServerUrl: string
+
 	return {
 		name: 'adonis-vite',
+		configResolved(config) {
+			resolvedConfig = config
+		},
+		config(userConfig) {
+			return {
+				publicDir: false,
+				...userConfig,
+				build: {
+					manifest: true,
+					emptyOutDir: false,
+					outDir: 'public',
+					rollupOptions: {
+						input: userConfig.build?.rollupOptions?.input ?? input,
+					},
+					...userConfig.build,
+				},
+				server: {
+					origin: '__adonis_vite_placeholder__',
+					host: 'localhost',
+					...userConfig.server,
+				},
+				optimizeDeps: {
+					entries: [],
+					...userConfig.optimizeDeps,
+				},
+			}
+		},
+		transform(code) {
+			if (resolvedConfig.command === 'serve') {
+				return code.replace(/__adonis_vite_placeholder__/g, devServerUrl)
+			}
+		},
 		configureServer(server) {
 			const hotFile = path.join('public', 'hot')
 
@@ -14,7 +49,7 @@ export default function adonisVitePlugin(): Plugin {
 				const isAddressInfo = (x: string | AddressInfo | null | undefined): x is AddressInfo =>
 					typeof x === 'object'
 				if (isAddressInfo(address)) {
-					const devServerUrl = resolveDevServerUrl(address, this.config)
+					devServerUrl = resolveDevServerUrl(address, resolvedConfig)
 					fs.writeFileSync(hotFile, devServerUrl)
 				}
 			})

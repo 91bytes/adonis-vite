@@ -73,6 +73,14 @@ Add the `@vite` edge tag in your edge layout's head. You don't need `@viteReactR
 @vite('app.tsx')
 ```
 
+#### Add to .gitignore
+
+```
+public/hot
+public/assets
+public/manifest.json
+```
+
 Add the following scripts in package.json:
 
 ```json
@@ -82,14 +90,6 @@ Add the following scripts in package.json:
 		"vite:build": "npm run vite build"
 	}
 }
-```
-
-#### Add to .gitignore
-
-```
-public/hot
-public/assets
-public/manifest.json
 ```
 
 Run these along with the default `dev` and `build` scripts.

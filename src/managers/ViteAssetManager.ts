@@ -1,19 +1,23 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { readFile } from 'fs/promises'
+import { PathLike } from 'fs'
+import { readFile, access } from 'fs/promises'
 import { resolveConfig, Manifest, ResolvedConfig } from 'vite'
 
-export default class AssetManager {
+async function fileExists(path: PathLike) {
+	try {
+		await access(path)
+		return true
+	} catch (_e) {
+		return false
+	}
+}
+
+export default class ViteAssetManager {
 	private manifest: Manifest
 	private config: ResolvedConfig
+	private devServerUrl: string | undefined
 
 	constructor(private app: ApplicationContract) {}
-
-	public async setup() {
-		await this.readViteConfig()
-		if (!this.manifest && this.isProduction()) {
-			await this.readManifest()
-		}
-	}
 
 	/**
 	 * Generates HTML to include appropriate JS, CSS.
@@ -23,19 +27,35 @@ export default class AssetManager {
 	 * @param entrypoints Vite entry points, for ex. app.ts
 	 * @returns Raw HTML
 	 */
-	public getMarkup(entrypoints: string[]) {
-		if (!this.isProduction()) {
-			return ['@vite/client', ...entrypoints]
-				.map((entrypoint) => this.devEntrypointMarkup(entrypoint))
+	public async getMarkup(entrypoints: string | string[]) {
+		await this.setup()
+		const entrypointsList = ([] as string[]).concat(entrypoints)
+		if (this.devServerUrl) {
+			return ['@vite/client', ...entrypointsList]
+				.map((entrypoint) => this.entryTag(`${this.devServerUrl}/${entrypoint}`))
 				.join('\n')
 		}
-		let markup = entrypoints.map((entrypoint) => this.prodEntrypointMarkup(entrypoint)).join('\n')
+		let markup = entrypointsList
+			.map((entrypoint) => this.prodEntrypointMarkup(entrypoint))
+			.join('\n')
 		markup += this.prefetchMarkup()
 		return markup
 	}
 
-	private isProduction() {
-		return this.app.env.get('NODE_ENV', 'development') === 'production'
+	private async setup() {
+		if (!this.config) {
+			await this.readViteConfig()
+		}
+		if (!this.manifest) {
+			await this.readManifest()
+		}
+		if (!this.devServerUrl && (await this.isDevServerRunning())) {
+			this.devServerUrl = await readFile(this.app.publicPath('hot'), 'utf-8')
+		}
+	}
+
+	private isDevServerRunning() {
+		return fileExists(this.app.publicPath('hot'))
 	}
 
 	private async readViteConfig() {
@@ -43,12 +63,14 @@ export default class AssetManager {
 		this.config = await resolveConfig({}, command)
 	}
 
-	public getFastRefreshMarkup() {
-		if (this.isProduction()) {
+	public async getFastRefreshMarkup() {
+		await this.setup()
+		if (!this.devServerUrl) {
 			return ''
 		}
 		return `<script type="module">
-		import RefreshRuntime from '${this.getDevServerUrl()}/@react-refresh'
+		import RefreshRuntime from '${this.devServerUrl}/@react-refresh'
+		window.RefreshRuntime = RefreshRuntime
 		RefreshRuntime.injectIntoGlobalHook(window)
 		window.$RefreshReg$ = () => {}
 		window.$RefreshSig$ = () => (type) => type
@@ -56,20 +78,8 @@ export default class AssetManager {
 	</script>`
 	}
 
-	private getDevServerUrl() {
-		const { https, port, host } = this.config.preview
-		return `${https ? 'https' : 'http'}://${typeof host === 'string' ? host : 'localhost'}:${
-			port ?? 3000
-		}`
-	}
-
-	private devEntrypointMarkup(entrypoint: string) {
-		const url = `${this.getDevServerUrl()}/${entrypoint}`
-		return this.entryTag(url)
-	}
-
 	private prodEntrypointMarkup(entrypoint: string) {
-		const fileName = this.manifest[entrypoint].file
+		const fileName = '/' + this.manifest[entrypoint].file
 
 		if (fileName.endsWith('.css')) {
 			return this.entryTag(fileName)
@@ -110,28 +120,20 @@ export default class AssetManager {
 	private async readManifest(): Promise<void> {
 		const manifestFileName =
 			typeof this.config.build.manifest === 'string' ? this.config.build.manifest : 'manifest.json'
+		if (!(await fileExists(this.app.publicPath(manifestFileName)))) return
+
 		const manifestText = await readFile(this.app.publicPath(manifestFileName), 'utf-8')
 		this.manifest = JSON.parse(manifestText)
 	}
 
 	private entryTag(path: string) {
-		if (!path.startsWith('/') && !path.startsWith('http://') && !path.startsWith('https://')) {
-			path = `/${path}`
-		}
 		if (path.endsWith('.css')) {
-			return `<link rel="stylesheet" href="${this.getAbsolutePath(path)}">`
+			return `<link rel="stylesheet" href="${path}">`
 		}
-		return `<script type="module" src="${this.getAbsolutePath(path)}"></script>`
+		return `<script type="module" src="${path}"></script>`
 	}
 
 	private prefetchTag(path: string, as?: HTMLLinkElement['as']) {
-		return `<link rel="prefetch" href="${this.getAbsolutePath(path)}"${as ? ` as="${as}"` : ''}>`
-	}
-
-	private getAbsolutePath(path: string) {
-		if (!path.startsWith('/') && !path.startsWith('http://') && !path.startsWith('https://')) {
-			return `/${path}`
-		}
-		return path
+		return `<link rel="prefetch" href="${path}"${as ? ` as="${as}"` : ''}>`
 	}
 }

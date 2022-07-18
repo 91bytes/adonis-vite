@@ -30,10 +30,6 @@ export default function adonisPlugin({ input }: { input: string | string[] }): P
 					host: 'localhost',
 					...userConfig.server,
 				},
-				optimizeDeps: {
-					entries: [],
-					...userConfig.optimizeDeps,
-				},
 			}
 		},
 		transform(code) {

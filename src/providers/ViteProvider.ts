@@ -45,8 +45,13 @@ export default class ViteProvider {
 			tagName: 'viteReactRefresh',
 			seekable: true,
 			block: false,
-			compile(_parser, buffer) {
-				buffer.outputRaw(assetManager.getFastRefreshMarkup())
+			compile(_parser, buffer, token) {
+				buffer.outputExpression(
+					`await state.viteAssetsManager.getFastRefreshMarkup()`,
+					token.filename,
+					token.loc.start.line,
+					false
+				)
 			},
 		})
 	}

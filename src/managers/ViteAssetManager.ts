@@ -63,12 +63,14 @@ export default class ViteAssetManager {
 		this.config = await resolveConfig({}, command)
 	}
 
-	public getFastRefreshMarkup() {
-		if (!this.isDevServerRunning()) {
+	public async getFastRefreshMarkup() {
+		await this.setup()
+		if (!this.devServerUrl) {
 			return ''
 		}
 		return `<script type="module">
 		import RefreshRuntime from '${this.devServerUrl}/@react-refresh'
+		window.RefreshRuntime = RefreshRuntime
 		RefreshRuntime.injectIntoGlobalHook(window)
 		window.$RefreshReg$ = () => {}
 		window.$RefreshSig$ = () => (type) => type

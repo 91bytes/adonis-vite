@@ -36,7 +36,7 @@
 		"youch-terminal": "^2.1.4"
 	},
 	"dependencies": {
-		"@91codes/adonis-vite": "file:../",
+		"@91codes/adonis-vite": "^0.3.1",
 		"@adonisjs/core": "^5.8.0",
 		"@adonisjs/repl": "^3.1.0",
 		"@adonisjs/session": "^6.2.0",

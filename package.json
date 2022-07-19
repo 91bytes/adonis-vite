@@ -1,6 +1,6 @@
 {
 	"name": "@91codes/adonis-vite",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"main": "build/providers/ViteProvider.js",
 	"license": "MIT",
 	"homepage": "https://github.com/91codes/adonis-vite#readme",
@@ -80,7 +80,6 @@
 		"build/**/*"
 	],
 	"adonisjs": {
-		"types": "@91codes/adonisjs-vite",
 		"providers": [
 			"@91codes/adonisjs-vite"
 		]

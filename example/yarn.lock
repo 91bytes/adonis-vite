@@ -2,8 +2,10 @@
 # yarn lockfile v1
 
 
-"@91codes/adonis-vite@file:..":
-  version "0.1.1"
+"@91codes/adonis-vite@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@91codes/adonis-vite/-/adonis-vite-0.3.1.tgz#48241d4a3b1903c5009350b068c58de1faa98316"
+  integrity sha512-YwZ1dd1j5JQjFu7z07Mr42q9Hx7mgCI4JHNjvAKydZw68sgQhy4KlxvDsKUWvFIWmEvMDEhlVDiM9Hvz8iTj5Q==
 
 "@adonisjs/ace@^11.3.0":
   version "11.3.1"

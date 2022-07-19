@@ -86,7 +86,7 @@ export default class ViteAssetManager {
 		}
 		let markup = this.entryTag(fileName)
 		this.manifest[entrypoint].css?.forEach((cssFileName) => {
-			markup += this.entryTag(cssFileName)
+			markup += this.entryTag('/' + cssFileName)
 		})
 		return markup
 	}
@@ -95,25 +95,8 @@ export default class ViteAssetManager {
 		const nonEntryKeys = Object.keys(this.manifest).filter(
 			(fileName) => !this.manifest[fileName].isEntry
 		)
-		const assets = Array.from(
-			new Set(
-				Object.values(this.manifest)
-					.map((chunk) => chunk.assets ?? [])
-					.flat()
-			)
-		)
-		const nonEntryCssFiles = Array.from(
-			new Set(nonEntryKeys.map((fileName) => this.manifest[fileName].css ?? []).flat())
-		)
 		return nonEntryKeys
-			.map((fileKey) => this.prefetchTag(this.manifest[fileKey].file, 'script'))
-			.concat(
-				nonEntryCssFiles.map((fileKey) => this.prefetchTag(this.manifest[fileKey].file, 'style'))
-			)
-			.concat(
-				// TODO: provide image vs font hints
-				assets.map((path) => this.prefetchTag(path))
-			)
+			.map((fileKey) => this.prefetchTag('/' + this.manifest[fileKey].file))
 			.join('\n')
 	}
 
@@ -133,7 +116,14 @@ export default class ViteAssetManager {
 		return `<script type="module" src="${path}"></script>`
 	}
 
-	private prefetchTag(path: string, as?: HTMLLinkElement['as']) {
-		return `<link rel="prefetch" href="${path}"${as ? ` as="${as}"` : ''}>`
+	private prefetchTag(path: string) {
+		let as: HTMLLinkElement['as'] = 'image'
+		if (path.endsWith('.js')) {
+			as = 'script'
+		}
+		if (path.endsWith('.css')) {
+			as = 'style'
+		}
+		return `<link rel="prefetch" href="${path}" as="${as}">`
 	}
 }

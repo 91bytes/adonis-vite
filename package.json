@@ -81,7 +81,7 @@
 	],
 	"adonisjs": {
 		"providers": [
-			"@91codes/adonisjs-vite"
+			"@91codes/adonis-vite"
 		]
 	}
 }
